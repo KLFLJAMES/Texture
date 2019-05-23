@@ -272,7 +272,7 @@
 - (ASTextNode *)createLayerBackedTextNodeWithString:(NSAttributedString *)attributedString
 {
   ASTextNode *textNode      = [[ASTextNode alloc] init];
-  textNode.layerBacked      = YES;
+//  textNode.layerBacked      = YES;
   textNode.attributedText = attributedString;
   return textNode;
 }

@@ -215,7 +215,7 @@ static NSArray *DefaultLinkAttributeNames() {
     // Accessibility
     self.isAccessibilityElement = YES;
     self.accessibilityTraits = self.defaultAccessibilityTraits;
-    
+
     // Placeholders
     // Disabled by default in ASDisplayNode, but add a few options for those who toggle
     // on the special placeholder behavior of ASTextNode.
@@ -312,6 +312,44 @@ static NSArray *DefaultLinkAttributeNames() {
 {
   return UIAccessibilityTraitStaticText;
 }
+
+- (NSInteger)indexOfAccessibilityElement:(id)element
+{
+  // This is not called yet as we don't return some in accessiblityElements getter
+  return [[self accessibilityElements] indexOfObject:element];
+}
+
+- (NSArray *)accessibilityElements
+  {
+    NSMutableArray<UIAccessibilityElement *> *accessibleElements = [NSMutableArray array];
+
+    // Create an accessibility element to represent the label's text. It's not necessary to specify
+    // a glyphRange here, as the entirety of the text is being represented.
+    UIAccessibilityElement *textElement =
+    [[UIAccessibilityElement alloc] initWithAccessibilityContainer:self];
+    textElement.accessibilityTraits = self.accessibilityTraits;
+    textElement.accessibilityLabel = self.defaultAccessibilityLabel;
+    textElement.accessibilityFrame = UIAccessibilityConvertFrameToScreenCoordinates(self.frame, self.view);
+    //textElement.accessibilityLabel = [_formattedString accessibilityLabel] ?: self.text;
+    //textElement
+    [accessibleElements addObject:textElement];
+
+//    UIAccessibilityElement *textElement2 =
+//    [[UIAccessibilityElement alloc] initWithAccessibilityContainer:self];
+//    textElement2.accessibilityTraits = self.accessibilityTraits;
+//    textElement2.accessibilityLabel = @"Some more";
+//    //textElement
+//    [accessibleElements addObject:textElement2];
+
+
+    return accessibleElements;
+  }
+
+  - (BOOL)isAccessibilityElement {
+    // Instead of relying on UILabel's accessibility, We implement UIAccessibilityContainer and
+    // handle accessibility with embedded YTNewLabelAccessibilityElements.
+    return NO;
+  }
 
 #pragma mark - Layout and Sizing
 
@@ -420,12 +458,12 @@ static NSArray *DefaultLinkAttributeNames() {
   [self setNeedsDisplay];
 
   // Accessiblity
-  self.accessibilityLabel = self.defaultAccessibilityLabel;
-  
+//  self.accessibilityLabel = self.defaultAccessibilityLabel;
+
   // We update the isAccessibilityElement setting if this node is not switching between strings.
   if (oldAttributedText.length == 0 || length == 0) {
     // We're an accessibility element by default if there is a string.
-    self.isAccessibilityElement = (length != 0);
+//    self.isAccessibilityElement = (length != 0);
   }
 
 #if AS_TEXTNODE2_RECORD_ATTRIBUTED_STRINGS
