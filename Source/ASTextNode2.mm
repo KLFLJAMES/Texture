@@ -213,8 +213,8 @@ static NSArray *DefaultLinkAttributeNames() {
     self.linkAttributeNames = DefaultLinkAttributeNames();
 
     // Accessibility
-    self.isAccessibilityElement = YES;
-    self.accessibilityTraits = self.defaultAccessibilityTraits;
+//    self.isAccessibilityElement = YES;
+//    self.accessibilityTraits = self.defaultAccessibilityTraits;
 
     // Placeholders
     // Disabled by default in ASDisplayNode, but add a few options for those who toggle
@@ -321,28 +321,36 @@ static NSArray *DefaultLinkAttributeNames() {
 
 - (NSArray *)accessibilityElements
   {
-    NSMutableArray<UIAccessibilityElement *> *accessibleElements = [NSMutableArray array];
+    // TODO: Needs to cache here or call super
 
-    // Create an accessibility element to represent the label's text. It's not necessary to specify
-    // a glyphRange here, as the entirety of the text is being represented.
-    UIAccessibilityElement *textElement =
-    [[UIAccessibilityElement alloc] initWithAccessibilityContainer:self];
-    textElement.accessibilityTraits = self.accessibilityTraits;
-    textElement.accessibilityLabel = self.defaultAccessibilityLabel;
-    textElement.accessibilityFrame = UIAccessibilityConvertFrameToScreenCoordinates(self.frame, self.view);
-    //textElement.accessibilityLabel = [_formattedString accessibilityLabel] ?: self.text;
-    //textElement
-    [accessibleElements addObject:textElement];
+    if (_accessibilityElements == nil) {
+      NSMutableArray<UIAccessibilityElement *> *accessibleElements = [NSMutableArray array];
 
-//    UIAccessibilityElement *textElement2 =
-//    [[UIAccessibilityElement alloc] initWithAccessibilityContainer:self];
-//    textElement2.accessibilityTraits = self.accessibilityTraits;
-//    textElement2.accessibilityLabel = @"Some more";
-//    //textElement
-//    [accessibleElements addObject:textElement2];
+      // Create an accessibility element to represent the label's text. It's not necessary to specify
+      // a glyphRange here, as the entirety of the text is being represented.
+      UIAccessibilityElement *textElement =
+      [[UIAccessibilityElement alloc] initWithAccessibilityContainer:self];
+      textElement.accessibilityTraits = self.accessibilityTraits;
+      textElement.accessibilityLabel = self.defaultAccessibilityLabel;
+      textElement.accessibilityIdentifier = self.defaultAccessibilityLabel;
+      textElement.accessibilityFrame = UIAccessibilityConvertFrameToScreenCoordinates(self.frame, self.view);
+      //textElement.accessibilityLabel = [_formattedString accessibilityLabel] ?: self.text;
+      //textElement
+      [accessibleElements addObject:textElement];
+      _accessibilityElements = accessibleElements;
+
+      // TODO: Add links support
+      //    UIAccessibilityElement *textElement2 =
+      //    [[UIAccessibilityElement alloc] initWithAccessibilityContainer:self];
+      //    textElement2.accessibilityTraits = self.accessibilityTraits;
+      //    textElement2.accessibilityLabel = @"Some more";
+      //    //textElement
+      //    [accessibleElements addObject:textElement2];
+
+    }
 
 
-    return accessibleElements;
+    return _accessibilityElements;
   }
 
   - (BOOL)isAccessibilityElement {
